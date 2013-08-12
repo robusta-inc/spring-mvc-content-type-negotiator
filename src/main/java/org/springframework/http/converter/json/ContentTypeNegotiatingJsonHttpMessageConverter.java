@@ -8,7 +8,6 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,13 +30,17 @@ public class ContentTypeNegotiatingJsonHttpMessageConverter implements HttpMessa
 
     @Override
     public void write(Object o, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        ServletServerHttpRequest request = new ServletServerHttpRequest(attributes.getRequest());
+        ServletServerHttpRequest request = request();
         System.out.println("request.getHeaders().getAccept() = " + request.getHeaders().getAccept());
-        System.out.println("object being serialized to json = " + o);
+        if(contentType.equals(MediaType.APPLICATION_JSON) && !request.getHeaders().getAccept().contains(MediaType.APPLICATION_JSON)) {
+            contentType = MediaType.TEXT_PLAIN;
+        }
         System.out.println("contentType = " + contentType);
-        System.out.println("Accepted headers = " + outputMessage.getHeaders().getAccept());
         converter.write(o, contentType, outputMessage);
+    }
+
+    private ServletServerHttpRequest request() {
+        return new ServletServerHttpRequest(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
     }
 
     @Override
