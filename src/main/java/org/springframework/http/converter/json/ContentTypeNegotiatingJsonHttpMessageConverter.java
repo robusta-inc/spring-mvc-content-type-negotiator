@@ -31,11 +31,9 @@ public class ContentTypeNegotiatingJsonHttpMessageConverter implements HttpMessa
     @Override
     public void write(Object o, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
         ServletServerHttpRequest request = request();
-        System.out.println("request.getHeaders().getAccept() = " + request.getHeaders().getAccept());
         if(contentType.includes(MediaType.APPLICATION_JSON) && !request.getHeaders().getAccept().contains(MediaType.APPLICATION_JSON)) {
             contentType = MediaType.TEXT_PLAIN;
         }
-        System.out.println("contentType = " + contentType);
         converter.write(o, contentType, outputMessage);
     }
 
