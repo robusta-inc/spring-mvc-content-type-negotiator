@@ -7,9 +7,9 @@
 <body>
  <span id="dynamic-content">Loading...</span>
  <script type="text/javascript">
-     $.getJSON( 'rest/brands/test', {}, function(data, textStatus, jqXHR) {
-         $("#dynamic-content").html('Data: ' + data);
-     });
+     $.ajax({url: 'rest/brands/test'}).done(function(data, textStatus, jqXHR) {
+            $("#dynamic-content").html('Data: ' + data);
+         });
 
  </script>
 </body>
